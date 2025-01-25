@@ -6,122 +6,142 @@
     <title>موقع أفلام</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
         }
 
         .container {
-            width: 90%;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 2rem;
-        }
-
-        .movie-list {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-around;
             gap: 20px;
+            padding: 20px;
         }
 
         .movie-item {
-            background-color: #fff;
-            border-radius: 10px;
+            width: 200px;
+            background-color: white;
+            border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .movie-item:hover {
+            transform: scale(1.05);
         }
 
         .movie-item img {
             width: 100%;
             height: auto;
-            display: block;
-            border-bottom: 4px solid #f4f4f4;
+            border-bottom: 3px solid #ddd;
         }
 
         .movie-item h3 {
-            padding: 15px;
-            text-align: center;
-            font-size: 1.2rem;
-            margin: 0;
+            padding: 10px;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
             background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 800px;
         }
 
-        .movie-item:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        .modal iframe {
+            width: 100%;
+            height: 450px;
         }
 
-        /* Media Query for Mobile */
-        @media (max-width: 767px) {
-            .movie-item {
-                width: 100%;
-                max-width: 320px;
-                margin: 10px auto;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
-        }
-
-        /* Media Query for Tablet */
-        @media (min-width: 768px) and (max-width: 1024px) {
-            .movie-item {
-                width: 45%;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-            }
-        }
-
-        /* Media Query for Desktop */
-        @media (min-width: 1025px) {
-            .movie-item {
-                width: 30%;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 30px;
+            color: #fff;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>أفضل الأفلام</h1>
-        <div class="movie-list">
-            <div class="movie-item">
-                <img src="https://via.placeholder.com/300x450" alt="فيلم 1">
-                <h3>فيلم 1</h3>
-            </div>
-            <div class="movie-item">
-                <img src="https://via.placeholder.com/300x450" alt="فيلم 2">
-                <h3>فيلم 2</h3>
-            </div>
-            <div class="movie-item">
-                <img src="https://via.placeholder.com/300x450" alt="فيلم 3">
-                <h3>فيلم 3</h3>
-            </div>
-            <div class="movie-item">
-                <img src="https://via.placeholder.com/300x450" alt="فيلم 4">
-                <h3>فيلم 4</h3>
-            </div>
-            <div class="movie-item">
-                <img src="https://via.placeholder.com/300x450" alt="فيلم 5">
-                <h3>فيلم 5</h3>
-            </div>
+    <div class="container" id="movie-list">
+        <!-- Movies will be dynamically populated here -->
+    </div>
+
+    <div id="movie-modal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <iframe id="movie-frame" src="" frameborder="0"></iframe>
         </div>
     </div>
+
+    <script>
+        // قائمة الأفلام مع البيانات: الاسم، الصورة المصغرة، والرابط المباشر للفيديو
+        const movies = [
+            {
+                name: "فيلم 1",
+                thumbnail: "https://drive.google.com/uc?id=158CjOI0-6d-mo_Qv3Xx67SQp_HcJQKvk",  // رابط الصورة المصغرة
+                video: "https://drive.google.com/file/d/158CjOI0-6d-mo_Qv3Xx67SQp_HcJQKvk/preview"  // رابط الفيديو
+            },
+            {
+                name: "فيلم 2",
+                thumbnail: "https://drive.google.com/uc?id=1cAmeVA3_JXxJn5d8iGRvc3MzjVryogMB",  // رابط الصورة المصغرة
+                video: "https://drive.google.com/file/d/1cAmeVA3_JXxJn5d8iGRvc3MzjVryogMB/preview"  // رابط الفيديو
+            },
+            {
+                name: "فيلم 3",
+                thumbnail: "https://drive.google.com/uc?id=1kj8LdpV5m-Btt7w9ZTqzPlzZuKokny7f",  // رابط الصورة المصغرة
+                video: "https://drive.google.com/file/d/1kj8LdpV5m-Btt7w9ZTqzPlzZuKokny7f/preview"  // رابط الفيديو
+            }
+        ];
+
+        // إضافة الأفلام إلى الصفحة
+        const movieListContainer = document.getElementById('movie-list');
+        movies.forEach(function(movie) {
+            const movieItem = document.createElement('div');
+            movieItem.classList.add('movie-item');
+            movieItem.onclick = function() {
+                openMovie(movie.video);  // عند الضغط على الفيلم، سيتم عرض الفيديو في نافذة منبثقة
+            };
+
+            movieItem.innerHTML = `
+                <img src="${movie.thumbnail}" alt="${movie.name}">
+                <h3>${movie.name}</h3>
+            `;
+            movieListContainer.appendChild(movieItem);
+        });
+
+        // فتح الفيلم في نافذة منبثقة
+        function openMovie(videoUrl) {
+            const iframe = document.getElementById('movie-frame');
+            iframe.src = videoUrl;
+            document.getElementById('movie-modal').style.display = 'flex';
+        }
+
+        // إغلاق النافذة المنبثقة
+        function closeModal() {
+            document.getElementById('movie-modal').style.display = 'none';
+        }
+    </script>
+
 </body>
 </html>
